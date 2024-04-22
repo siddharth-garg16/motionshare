@@ -5,15 +5,25 @@ import cors from "cors";
 dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 5999;
+const allowedOrigins = ['https://testdomain.com', 'http://localhost:4200']
+const corsOptions: cors.CorsOptions = {
+    origin: function(origin, callback){
+        if(allowedOrigins.indexOf(origin!) !== 1 || !origin){
+            callback(null, true)
+        } else {
+            callback(new Error('Blocked by CORS policy'));
+        }
+    }
+};
 
 const runServer = () => {
-    app.use(cors());
+    app.use(cors(corsOptions));
     app.listen(PORT, ()=>{
         console.log(`motionshare server is listening on PORT: ${PORT}`)
     })
 }
 
-app.get('/', (req: Request, res: Response)=>{
+app.get('/health', (req: Request, res: Response)=>{
     const serverStatus = {serverStatus: 'Running'};
     res.json(serverStatus);
 })
