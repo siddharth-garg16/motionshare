@@ -1,8 +1,12 @@
 import express, {Request, Response, Express} from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import connectDB from "./db/db.connection";
 
 dotenv.config();
+
+connectDB();
+
 const app: Express = express();
 const PORT = process.env.PORT || 5999;
 const allowedOrigins = ['https://testdomain.com', 'http://localhost:4200']
