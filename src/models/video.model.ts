@@ -36,6 +36,10 @@ const videoSchema = new Schema(
         owner: {
             type: Schema.Types.ObjectId,
             ref: "User"
+        },
+        flaggedForSensitivity: {
+            type: Boolean,
+            default: true
         }
     },
     {

@@ -43,6 +43,10 @@ const userSchema = new Schema(
         },
         refreshToken: {
             type: String
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false
         }
     },
     {
@@ -61,7 +65,7 @@ userSchema.methods.isPasswordCorrect = async function(password: string) {
     return await bcrypt.compare(password, this.password);
 }
 
-userSchema.methods.generateAccessToken = function() {
+userSchema.methods.generateAccessToken = function(): string {
     const ACCESS_TOKEN_SECRET:string = process.env.ACCESS_TOKEN_SECRET as string;
     const ACCESS_TOKEN_EXPIRY:string = process.env.ACCESS_TOKEN_EXPIRY as string;
     return jwt.sign(
@@ -78,7 +82,7 @@ userSchema.methods.generateAccessToken = function() {
     )
 }
 
-userSchema.methods.generateRefreshToken = function() {
+userSchema.methods.generateRefreshToken = function(): string {
     const REFRESH_TOKEN_SECRET:string = process.env.REFRESH_TOKEN_SECRET as string;
     const REFRESH_TOKEN_EXPIRY:string = process.env.REFRESH_TOKEN_EXPIRY as string;
     return jwt.sign(
