@@ -63,6 +63,10 @@ const videoSchema = new mongoose_1.Schema({
     owner: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User"
+    },
+    flaggedForSensitivity: {
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true

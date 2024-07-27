@@ -22,6 +22,12 @@ app.use(express.urlencoded({extended: true, limit: '50kb'}))
 app.use(express.static("assets"));
 app.use(cookieParser());
 
+// routes imports
+import userRouter from './routes/user.route';
+
+// routes declaration
+app.use("/api/v1/users", userRouter);
+
 app.get('/health', (req: Request, res: Response)=>{
     const serverStatus = {serverStatus: 'Running'};
     res.json(serverStatus);
