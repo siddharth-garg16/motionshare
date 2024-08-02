@@ -25,10 +25,6 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     const avatarPath = files.avatar?.[0]?.path;
     const coverPath = files.coverImage?.[0]?.path;
-    if(!avatarPath){
-        res.status(409);
-        throw new Error("Avatar is required");
-    }
 
     // get uploaded files reference
     const avatar = await uploadOnCloudinary(avatarPath);
