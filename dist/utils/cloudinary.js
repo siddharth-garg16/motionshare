@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadOnCloudinary = void 0;
 const cloudinary_1 = require("cloudinary");
 const fs_1 = __importDefault(require("fs"));
-cloudinary_1.v2.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View Credentials' below to copy your API secret
-});
 const uploadOnCloudinary = (localFilePath) => __awaiter(void 0, void 0, void 0, function* () {
+    cloudinary_1.v2.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
     try {
         if (!localFilePath)
             return null;
@@ -28,9 +28,11 @@ const uploadOnCloudinary = (localFilePath) => __awaiter(void 0, void 0, void 0, 
             resource_type: 'auto'
         });
         console.log('File uploaded!', uploadResponse.url);
+        fs_1.default.unlinkSync(localFilePath);
         return uploadResponse;
     }
     catch (error) {
+        console.log('file upload error!', error);
         fs_1.default.unlinkSync(localFilePath);
         return null;
     }

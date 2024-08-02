@@ -29,8 +29,4 @@ app.use((0, cookie_parser_1.default)());
 // routes imports
 const user_route_1 = __importDefault(require("./routes/user.route"));
 // routes declaration
-app.use("/api/v1/users", user_route_1.default);
-app.get('/health', (req, res) => {
-    const serverStatus = { serverStatus: 'Running' };
-    res.json(serverStatus);
-});
+app.use("/api/v1/user", user_route_1.default);
