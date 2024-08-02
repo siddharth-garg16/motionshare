@@ -1,4 +1,4 @@
-import express, {Express, Request, Response} from 'express';
+import express, {Express} from 'express';
 import cors from "cors";
 import { allowedOrigins } from './constants/cors.constant';
 import cookieParser from 'cookie-parser';
@@ -26,11 +26,6 @@ app.use(cookieParser());
 import userRouter from './routes/user.route';
 
 // routes declaration
-app.use("/api/v1/users", userRouter);
-
-app.get('/health', (req: Request, res: Response)=>{
-    const serverStatus = {serverStatus: 'Running'};
-    res.json(serverStatus);
-})
+app.use("/api/v1/user", userRouter);
 
 export { app }
