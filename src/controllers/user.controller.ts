@@ -33,14 +33,10 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     // get uploaded files reference
     const avatar = await uploadOnCloudinary(avatarPath);
     const coverImage = await uploadOnCloudinary(coverPath);
-    if(!avatar){
-        res.status(409);
-        throw new Error("Avatar is required");
-    }
 
     const newUser = await User.create({
         fullName,
-        avatar: avatar.url,
+        avatar: avatar?.url || "",
         coverImage: coverImage?.url || "",
         email,
         password,
