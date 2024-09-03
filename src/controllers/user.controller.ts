@@ -3,6 +3,20 @@ import { Request, Response } from 'express';
 import { User } from "../models/user.model";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 
+const generateAccessAndRefreshToken = async(userId: string) => {
+    try{
+        const user = await User.findById(userId);
+        const accesssToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+
+        user.refreshToken = refreshToken;
+        await user.save({validateBeforeSave: false});
+
+        return {accesssToken, refreshToken}
+    }catch(error){
+        throw new Error('Failed to process request');
+    }
+}
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const {username, email, fullName, password} = req.body;
@@ -53,4 +67,48 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     })
 })
 
-export {registerUser}
+const loginUser = asyncHandler(async(req: Request, res: Response) => {
+    const {email, username, password} = req.body;
+    if(!email || !username){
+        res.status(404);
+        throw new Error('Email or username is required');
+    }
+    const existingUser = await User.findOne({
+        $or: [{ username }, { email }]
+    })
+    if(!existingUser){
+        res.status(404);
+        throw new Error("User doesn't exist");
+    }
+    const isPasswordCorrect = await existingUser.isPasswordCorrect(password);
+    if(!isPasswordCorrect){
+        res.status(401);
+        throw new Error('Invalid credentials');
+    }
+    const {accesssToken, refreshToken} = await generateAccessAndRefreshToken(existingUser._id)
+    const loggedinUser = await User.findById(existingUser._id).select("-password -refreshToken");
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+    res.status(200).cookie("accessToken", accesssToken, options).cookie("refreshToken", refreshToken, options).json({user: loggedinUser, accesssToken, refreshToken});
+})
+
+const logoutUser = asyncHandler(async(req: Request, res: Response) => {
+    await User.findByIdAndUpdate(req.user._id,
+    {
+        $set: {
+            refreshToken: null
+        }
+    },
+    {
+        new: true
+    })
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+    res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json({message: "User logged out successfully"})
+})
+
+export {registerUser, loginUser, logoutUser}
