@@ -111,4 +111,12 @@ const logoutUser = asyncHandler(async(req: Request, res: Response) => {
     res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json({message: "User logged out successfully"})
 })
 
-export {registerUser, loginUser, logoutUser}
+const refreshAccessToken = asyncHandler(async(req: Request, res: Response) => {
+    const incomingToken = req.cookies.refreshToken || req.body.refreshToken;
+    if(!incomingToken){
+        res.status(401);
+        throw new Error('Invalid credentials');
+    }
+})
+
+export {registerUser, loginUser, logoutUser, refreshAccessToken}
